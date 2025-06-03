@@ -13,8 +13,8 @@
 #define RED_PIN 8   // OC4C
 #define BLUE_PIN 6  // OC4A
 
-#define RELAY1 38
-#define RELAY2 36
+#define PUMP 38
+#define VALVE 36
 #define CO2_TANK 34
 #define SENDI 2000
 #define HUM 30
@@ -34,7 +34,6 @@ NeoSWSerial mySerial1(53, 52);  // To Node
 bool heater_status = 0;
 bool compressor_status = 0;
 bool humidifier_status = 0;
-bool co2_status = 0;
 
 //sensor value
 float temp_sensor = 27;
@@ -94,8 +93,10 @@ void humON();
 void humOFF();
 void ptcON();
 void ptcOFF();
-void co2RelayON();
-void co2RelayOFF();
+void ValveON();
+void ValveOFF();
+void PumpON();
+void PumpOFF();
 void co2TankON();
 void co2TankOFF();
 void applyLedModeAndIntensity();
@@ -126,15 +127,16 @@ void setup() {
   pinMode(HEATER, OUTPUT);
   pinMode(SV, OUTPUT);
   pinMode(COMP, OUTPUT);
-  pinMode(RELAY1, OUTPUT);
-  pinMode(RELAY2, OUTPUT);
+  pinMode(PUMP, OUTPUT);
+  pinMode(VALVE, OUTPUT);
   pinMode(CO2_TANK, OUTPUT);
 
   digitalWrite(HEATER, LOW);
   digitalWrite(SV, LOW);
   digitalWrite(COMP, LOW);
   digitalWrite(HUM, LOW);
-  co2RelayOFF();
+  PumpOFF();
+  ValveOFF();
   co2TankOFF();
 
   pinMode(PAR_PIN, OUTPUT);
@@ -298,13 +300,16 @@ void loop() {
   float co2_upper = co2_setpoint + (0.1 * co2_setpoint);
 
   if (co2_sensor > co2_upper) {
-    co2RelayON();
+    PumpON();
+    ValveON();
     co2TankOFF();
   } else if (co2_sensor < co2_lower) {
-    co2RelayON();
+    PumpOFF();
+    ValveOFF();
     co2TankON();
   } else {
-    co2RelayOFF();
+    PumpOFF();
+    ValveOFF();
     co2TankOFF();
   }
 }
@@ -680,6 +685,13 @@ void readDataFromNode() {
       // Serial.print("Node CO2 Concentration Updated: "); Serial.println(co2_sensor);
     }
   }
+  if (door_sensor == 1) {
+    ValveOFF();
+    PumpOFF();
+    co2TankOFF();
+    light_mode = 5; // Turn off all LEDs
+    applyLedModeAndIntensity();
+  }
 }
 
 // Actuator control functions with status tracking
@@ -728,13 +740,17 @@ void ptcOFF() {
   }
 }
 
-void co2RelayON() {
-  digitalWrite(RELAY1, HIGH);
-  digitalWrite(RELAY2, HIGH);
+void ValveON() {
+  digitalWrite(VALVE, HIGH);
 }
-void co2RelayOFF() {
-  digitalWrite(RELAY1, LOW);
-  digitalWrite(RELAY2, LOW);
+void ValveON() {
+  digitalWrite(VALVE, LOW);
+}
+void PumpON() {
+  digitalWrite(PUMP, HIGH);
+}
+void PumpOFF() {
+  digitalWrite(PUMP, LOW);
 }
 void co2TankON() {
   digitalWrite(CO2_TANK, HIGH);
