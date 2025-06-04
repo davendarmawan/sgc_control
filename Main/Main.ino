@@ -743,7 +743,7 @@ void ptcOFF() {
 void ValveON() {
   digitalWrite(VALVE, HIGH);
 }
-void ValveON() {
+void ValveOFF() {
   digitalWrite(VALVE, LOW);
 }
 void PumpON() {
