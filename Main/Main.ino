@@ -38,7 +38,7 @@ bool humidifier_status = 0;
 //sensor value
 float temp_sensor = 27;
 float hum_sensor = 80;
-// float led_sensor = 0;  // Light sensor (lux) from Node
+float led_sensor;  // Light sensor (lux) from Node
 float door_sensor = 0;
 float co2_sensor;
 
