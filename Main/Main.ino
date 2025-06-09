@@ -296,14 +296,14 @@ void loop() {
     default:;
   }
 
-  float co2_lower = co2_setpoint - (0.1 * co2_setpoint);
-  float co2_upper = co2_setpoint + (0.1 * co2_setpoint);
+  // float co2_lower = co2_setpoint - (0.1 * co2_setpoint);
+  // float co2_upper = co2_setpoint + (0.1 * co2_setpoint);
 
-  if ((co2_sensor > co2_upper) || co2_sensor >= 1100) {
+  if ((co2_sensor > co2_setpoint) || co2_sensor >= 1100) {
     PumpON();
     ValveON();
     co2TankOFF();
-  } else if ((co2_sensor < co2_lower) && door_sensor == 0) {
+  } else if ((co2_sensor < co2_setpoint) && door_sensor == 0) {
     PumpOFF();
     ValveOFF();
     co2TankON();
